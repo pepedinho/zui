@@ -3,6 +3,12 @@ const std = @import("std");
 const style_mod = @import("style.zig");
 const text_mod = @import("text.zig");
 const buffer_mod = @import("buffer.zig");
+const layout_mod = @import("layout.zig");
+const terminal_mod = @import("terminal.zig");
+
+pub const backend = struct {
+    pub const ansi = @import("backend/ansi.zig");
+};
 
 pub const style = style_mod;
 pub const Color = style_mod.Color;
@@ -14,6 +20,9 @@ pub const Line = text_mod.Line;
 pub const buffer = buffer_mod;
 pub const Cell = buffer_mod.Cell;
 pub const Buffer = buffer_mod.Buffer;
+pub const layout = layout_mod;
+pub const Rect = layout.Rect;
+pub const terminal = terminal_mod;
 
 test {
     std.testing.refAllDecls(@This());

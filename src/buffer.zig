@@ -13,20 +13,28 @@ pub const Cell = struct {
     /// The string content of the cell. Usually a single character,
     /// but stored as a slice to support multi-byte UTF-8 graphemes.
     /// Default is a single space.
-    symbol: []const u8 = " ",
+    symbol_buf: [15]u8 = [_]u8{' '} ++ [_]u8{0} ** 14,
+    symbol_len: u8 = 1,
 
     /// The visual style (colors and modifiers) applied to this cell.
     style: Style = .{},
 
     /// Reset the call to an empty space with default styling.
     pub fn reset(self: *Self) void {
-        self.symbol = " ";
+        self.symbol_buf[0] = ' ';
+        self.symbol_len = 1;
         self.style = .init();
     }
 
     /// Sets the symbol of the cell.
     pub fn setSymbol(self: *Self, symbol: []const u8) void {
-        self.symbol = symbol;
+        const len = @min(symbol.len, 15);
+        @memcpy(self.symbol_buf[0..len], symbol[0..len]);
+        self.symbol_len = @as(u8, @intCast(len));
+    }
+
+    pub fn getSymbol(self: *const Self) []const u8 {
+        return self.symbol_buf[0..self.symbol_len];
     }
 
     /// Sets the style of the cell.
@@ -118,7 +126,20 @@ pub const Buffer = struct {
     /// Applies a style to a specific rectangular area in the buffer.
     /// This is useful for filling the background of a block or rendering borders.
     pub fn setStyleArea(self: *Self, area: @import("layout.zig").Rect, style: Style) void {
-        //TODO: write layout.zig module
+        const start_x = area.x;
+        const end_x = @min(self.width, area.x + area.width);
+        const start_y = area.y;
+        const end_y = @min(self.height, area.y + area.height);
+
+        var y: u16 = start_y;
+        while (y < end_y) : (y += 1) {
+            var x: u16 = start_x;
+            while (x < end_x) : (x += 1) {
+                if (self.get(x, y)) |cell| {
+                    cell.style = cell.style.patch(style);
+                }
+            }
+        }
     }
 
     /// Returns a pointer to the cell at the specified coordinates.
@@ -154,7 +175,7 @@ test "Buffer initialization and access" {
     }
 
     const check_cell = buf.get(2, 3).?;
-    try std.testing.expectEqualStrings("X", check_cell.symbol);
+    try std.testing.expectEqualStrings("X", check_cell.getSymbol());
 
     try std.testing.expectEqual(@as(?*Cell, null), buf.get(10, 5));
 }
@@ -171,7 +192,7 @@ test "Buffer setString with UTF-8" {
     const cell_1 = buf.get(1, 0).?;
     const cell_2 = buf.get(2, 0).?; // Should be empty
 
-    try std.testing.expectEqualStrings("H", cell_0.symbol);
-    try std.testing.expectEqualStrings("é", cell_1.symbol);
-    try std.testing.expectEqualStrings(" ", cell_2.symbol);
+    try std.testing.expectEqualStrings("H", cell_0.getSymbol());
+    try std.testing.expectEqualStrings("é", cell_1.getSymbol());
+    try std.testing.expectEqualStrings(" ", cell_2.getSymbol());
 }
