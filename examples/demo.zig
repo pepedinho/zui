@@ -52,6 +52,7 @@ fn render(app: *App, frame: *zui.terminal.Frame) void {
 
     const header_par = zui.widgets.Paragraph{
         .text = "Zui Dashboard",
+        .alignement = .Center,
         .style = .{ .add_modifier = .{ .bold = true } },
         .block = .{
             .borders = .ALL,
