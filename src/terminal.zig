@@ -20,9 +20,16 @@ pub const Frame = struct {
     /// The memory grid where widgets draw themselves.
     buffer: *Buffer,
 
+    /// Used to place cursor at the end of a frame.
+    cursor_position: ?struct { x: u16, y: u16 } = null,
+
     /// Return the full usable area of the terminal screen.
     pub fn size(self: Self) Rect {
         return Rect.init(0, 0, self.buffer.width, self.buffer.height);
+    }
+
+    pub fn setCursor(self: *Self, x: u16, y: u16) void {
+        self.cursor_position = .{ .x = x, .y = y };
     }
 };
 
@@ -85,6 +92,12 @@ pub const Terminal = struct {
 
         renderFn(ctx, &frame);
 
+        if (frame.cursor_position) |pos| {
+            try ansi.writeMoveCursor(self.writer, pos.x, pos.y);
+            try ansi.writeShowCursor(self.writer);
+        } else {
+            try ansi.writeHideCursor(self.writer);
+        }
         try self.flush();
     }
 
