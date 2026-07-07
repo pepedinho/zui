@@ -28,34 +28,34 @@ fn render(app: *App, frame: *zui.terminal.Frame) void {
     const left_area = horizontal_chunks[0];
     const right_area = horizontal_chunks[1];
 
-    const header_block = zui.widgets.block.Block.init()
-        .setBorders(zui.widgets.block.Borders.ALL)
+    const header_block = zui.widgets.Block.init()
+        .setBorders(zui.widgets.Borders.ALL)
         .setStyle(zui.style.Style.init().wfg(.Yellow));
     header_block.render(header_area, frame.buffer);
 
-    const left_block = zui.widgets.block.Block.init()
-        .setBorders(zui.widgets.block.Borders.ALL)
-        .setStyle(zui.style.Style.init().wfg(.Cyan));
-    left_block.render(left_area, frame.buffer);
+    const header_par = zui.widgets.Paragraph.init("ZUI Dashboard")
+        .setBlock(zui.widgets.Block.init_bordered().setStyle(zui.Style.init().wfg(.Yellow)))
+        .setStyle(zui.Style.init().a_bold());
 
-    const right_block = zui.widgets.block.Block.init()
-        .setBorders(zui.widgets.block.Borders.ALL)
-        .setStyle(zui.style.Style.init().wfg(.Green));
-    right_block.render(right_area, frame.buffer);
+    header_par.render(header_area, frame.buffer);
+
+    var buf: [64]u8 = undefined;
+    const text = std.fmt.bufPrint(&buf, "[*] Frame: {d}", .{app.counter}) catch "Error";
+    const left_par = zui.widgets.Paragraph.init(text)
+        .setBlock(zui.widgets.Block.init_bordered().setStyle(zui.Style.init().wfg(.Cyan)))
+        .setStyle(zui.Style.init().wfg(.Cyan).a_bold());
+
+    left_par.render(left_area, frame.buffer);
+
+    var right_par = zui.widgets.Paragraph.init("Patientez 5 secondes...")
+        .setBlock(zui.widgets.Block.init_bordered().setStyle(zui.Style.init().wfg(.Green)))
+        .setStyle(zui.Style.init().a_dim());
+
+    right_par.render(right_area, frame.buffer);
 
     const header_inner = header_block.inner(header_area);
     const title_span = zui.text.Span.styled(" ZUI Dashboard ", zui.style.Style.init().a_bold());
     frame.buffer.setSpan(header_inner.x + 2, header_inner.y, &title_span);
-
-    const left_inner = left_block.inner(left_area);
-    var buf: [64]u8 = undefined;
-    const text = std.fmt.bufPrint(&buf, "[*] Frame: {d}", .{app.counter}) catch "Error";
-    const span = zui.text.Span.styled(text, zui.style.Style.init().wfg(.Cyan).a_bold());
-    frame.buffer.setSpan(left_inner.x, left_inner.y, &span);
-
-    const right_inner = right_block.inner(right_area);
-    const help_span = zui.text.Span.styled("Patientez 5 secondes...", zui.style.Style.init().a_dim());
-    frame.buffer.setSpan(right_inner.x, right_inner.y, &help_span);
 }
 
 pub fn main(init: std.process.Init) !void {

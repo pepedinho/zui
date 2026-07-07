@@ -33,6 +33,12 @@ pub const Block = struct {
         return .{};
     }
 
+    pub fn init_bordered() Self {
+        return .{
+            .borders = Borders.ALL,
+        };
+    }
+
     pub fn setBorders(self: Self, b: Borders) Self {
         var copy = self;
         copy.borders = b;
