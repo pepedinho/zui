@@ -61,9 +61,9 @@ pub const Terminal = struct {
             .writer = writer,
         };
 
-        try ansi.writeEnterAlternateScreen(term.writer);
-        try ansi.writeHideCursor(term.writer);
-        try ansi.writeClearScreen(term.writer);
+        // try ansi.writeEnterAlternateScreen(term.writer);
+        // try ansi.writeHideCursor(term.writer);
+        // try ansi.writeClearScreen(term.writer);
 
         return term;
     }
