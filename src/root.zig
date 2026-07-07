@@ -14,6 +14,11 @@ pub const widgets = struct {
     pub const Block = @import("widgets/block.zig").Block;
     pub const Borders = @import("widgets/block.zig").Borders;
     pub const Paragraph = @import("widgets/paragraph.zig").Paragraph;
+    pub const List = @import("widgets/list.zig").List;
+    pub const Span = @import("widgets/span.zig").Span;
+    pub const Line = @import("widgets/line.zig").Line;
+    pub const Gauge = @import("widgets/gauge.zig").Gauge;
+    pub const Clear = @import("widgets/clear.zig").Clear;
 };
 
 pub const style = style_mod;

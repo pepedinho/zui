@@ -92,6 +92,15 @@ pub const Buffer = struct {
         }
     }
 
+    /// Change a specific `Cell` with its coordinates.
+    pub fn setCell(self: *Self, x: u16, y: u16, symbol: []const u8, style: Style) void {
+        const cell = self.get(x, y);
+        if (cell) |c| {
+            c.setSymbol(symbol);
+            c.setStyle(style);
+        }
+    }
+
     /// Writes a styled `Span` to the buffer starting at (x, y)
     pub fn setSpan(self: *Self, x: u16, y: u16, span: *const @import("text.zig").Span) void {
         self.setString(x, y, span.content, span.style);

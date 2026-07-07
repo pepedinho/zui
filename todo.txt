@@ -1,1 +1,2 @@
 x 2026-07-07 2026-07-07 add paragraph for texts
+(B) Implement logic for Paragraph.wrapped +widget
