@@ -11,7 +11,9 @@ pub const backend = struct {
 };
 
 pub const widgets = struct {
-    pub const block = @import("widgets/block.zig");
+    pub const Block = @import("widgets/block.zig").Block;
+    pub const Borders = @import("widgets/block.zig").Borders;
+    pub const Paragraph = @import("widgets/paragraph.zig").Paragraph;
 };
 
 pub const style = style_mod;

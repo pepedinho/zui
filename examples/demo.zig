@@ -28,34 +28,38 @@ fn render(app: *App, frame: *zui.terminal.Frame) void {
     const left_area = horizontal_chunks[0];
     const right_area = horizontal_chunks[1];
 
-    const header_block = zui.widgets.block.Block.init()
-        .setBorders(zui.widgets.block.Borders.ALL)
-        .setStyle(zui.style.Style.init().wfg(.Yellow));
-    header_block.render(header_area, frame.buffer);
-
-    const left_block = zui.widgets.block.Block.init()
-        .setBorders(zui.widgets.block.Borders.ALL)
-        .setStyle(zui.style.Style.init().wfg(.Cyan));
-    left_block.render(left_area, frame.buffer);
-
-    const right_block = zui.widgets.block.Block.init()
-        .setBorders(zui.widgets.block.Borders.ALL)
-        .setStyle(zui.style.Style.init().wfg(.Green));
-    right_block.render(right_area, frame.buffer);
-
-    const header_inner = header_block.inner(header_area);
-    const title_span = zui.text.Span.styled(" ZUI Dashboard ", zui.style.Style.init().a_bold());
-    frame.buffer.setSpan(header_inner.x + 2, header_inner.y, &title_span);
-
-    const left_inner = left_block.inner(left_area);
     var buf: [64]u8 = undefined;
     const text = std.fmt.bufPrint(&buf, "[*] Frame: {d}", .{app.counter}) catch "Error";
-    const span = zui.text.Span.styled(text, zui.style.Style.init().wfg(.Cyan).a_bold());
-    frame.buffer.setSpan(left_inner.x, left_inner.y, &span);
 
-    const right_inner = right_block.inner(right_area);
-    const help_span = zui.text.Span.styled("Patientez 5 secondes...", zui.style.Style.init().a_dim());
-    frame.buffer.setSpan(right_inner.x, right_inner.y, &help_span);
+    const header_par = zui.widgets.Paragraph{
+        .text = "Zui Dashboard",
+        .style = .{ .add_modifier = .{ .bold = true } },
+        .block = .{
+            .borders = .ALL,
+            .style = .{ .fg = .Yellow },
+        },
+    };
+
+    const left_par = zui.widgets.Paragraph{
+        .text = text,
+        .style = .{
+            .fg = .Cyan,
+            .add_modifier = .{ .bold = true },
+        },
+        .block = .{ .borders = .ALL, .style = .{ .fg = .Cyan } },
+    };
+
+    const right_par = zui.widgets.Paragraph{
+        .text = "Wait 5 secondes...",
+        .style = .{ .add_modifier = .{ .dim = true } },
+        .block = .{ .borders = .ALL, .style = .{
+            .fg = .Green,
+        } },
+    };
+
+    left_par.render(left_area, frame.buffer);
+    header_par.render(header_area, frame.buffer);
+    right_par.render(right_area, frame.buffer);
 }
 
 pub fn main(init: std.process.Init) !void {
@@ -64,7 +68,7 @@ pub fn main(init: std.process.Init) !void {
     var stdout_writer = std.Io.File.stdout().writer(init.io, &stoudt_buf);
     const stdout = &stdout_writer.interface;
 
-    var term = try zui.terminal.Terminal.init(gpa, stdout, 80, 24);
+    var term = try zui.terminal.Terminal.init(gpa, stdout, 100, 30);
     defer term.deinit();
 
     var app = App{};

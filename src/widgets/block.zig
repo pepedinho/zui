@@ -33,18 +33,6 @@ pub const Block = struct {
         return .{};
     }
 
-    pub fn setBorders(self: Self, b: Borders) Self {
-        var copy = self;
-        copy.borders = b;
-        return copy;
-    }
-
-    pub fn setStyle(self: Self, s: Style) Self {
-        var copy = self;
-        copy.style = s;
-        return copy;
-    }
-
     pub fn inner(self: Self, area: Rect) Rect {
         var inner_area = area;
 
