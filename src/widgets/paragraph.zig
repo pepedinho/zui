@@ -8,27 +8,13 @@ pub const Paragraph = struct {
     const Self = @This();
 
     text: []const u8,
-    style: Style,
-    block: ?Block,
+    style: Style = .{},
+    block: ?Block = null,
 
     pub fn init(text: []const u8) Self {
         return .{
             .text = text,
-            .style = .init(),
-            .block = null,
         };
-    }
-
-    pub fn setStyle(self: Self, s: Style) Self {
-        var copy = self;
-        copy.style = s;
-        return copy;
-    }
-
-    pub fn setBlock(self: Self, block: Block) Self {
-        var copy = self;
-        copy.block = block;
-        return copy;
     }
 
     pub fn render(self: Self, area: Rect, buf: *Buffer) void {
