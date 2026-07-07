@@ -106,6 +106,7 @@ fn render(app: *App, frame: *zui.terminal.Frame) void {
                 .{ .spans = &.{.{ .text = "  Le composant Clear fonctionne.", .style = .{ .fg = .White } }} },
             },
             .block = .{
+                .title = "POPUP",
                 .borders = .ALL,
                 .style = .{ .fg = .Red },
             },

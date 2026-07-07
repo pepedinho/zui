@@ -27,6 +27,8 @@ pub const Block = struct {
     const Self = @This();
 
     borders: Borders = .NONE,
+    title: ?[]const u8 = null,
+    title_style: ?Style = null,
     style: Style = .{},
 
     pub fn init() Self {
@@ -122,6 +124,27 @@ pub const Block = struct {
             if (buf.get(right_x, bottom_y)) |c| {
                 c.setSymbol(BOX_BR);
                 c.setStyle(self.style);
+            }
+        }
+
+        if (self.title) |title| {
+            if (self.borders.top and area.width > 4) {
+                const max_x = right_x - 2;
+                var current_x = area.x + 2;
+                const title_style = self.title_style orelse self.style;
+
+                var view = std.unicode.Utf8View.init(title) catch return;
+                var iter = view.iterator();
+
+                while (iter.nextCodepointSlice()) |codepoint_slice| {
+                    if (current_x >= max_x) break;
+
+                    if (buf.get(current_x, area.y)) |c| {
+                        c.setSymbol(codepoint_slice);
+                        c.setStyle(title_style);
+                    }
+                    current_x += 1;
+                }
             }
         }
     }

@@ -35,7 +35,27 @@ pub const Paragraph = struct {
         }
 
         if (self.text) |t| {
-            buf.setString(current_area.x, current_area.y, t, self.style);
+            if (self.wraping) {
+                var start: usize = 0;
+                var y_offset: u16 = 0;
+
+                while (start < t.len and y_offset < current_area.height) : (y_offset += 1) {
+                    const end = @min(start + current_area.width, t.len);
+                    const line_text = t[start..end];
+
+                    buf.setString(
+                        current_area.x,
+                        current_area.y + y_offset,
+                        line_text,
+                        self.style,
+                    );
+
+                    start = end;
+                }
+            } else {
+                const end = @min(t.len, current_area.width);
+                buf.setString(current_area.x, current_area.y, t[0..end], self.style);
+            }
         } else if (self.lines) |lines| {
             for (lines, 0..) |line, y_offset| {
                 if (y_offset >= current_area.height) break;
