@@ -10,6 +10,10 @@ pub const backend = struct {
     pub const ansi = @import("backend/ansi.zig");
 };
 
+pub const widgets = struct {
+    pub const block = @import("widgets/block.zig");
+};
+
 pub const style = style_mod;
 pub const Color = style_mod.Color;
 pub const Modifier = style_mod.Modifier;
@@ -22,6 +26,8 @@ pub const Cell = buffer_mod.Cell;
 pub const Buffer = buffer_mod.Buffer;
 pub const layout = layout_mod;
 pub const Rect = layout.Rect;
+pub const Layout = layout.Layout;
+pub const Constraint = layout.Constraint;
 pub const terminal = terminal_mod;
 
 test {
